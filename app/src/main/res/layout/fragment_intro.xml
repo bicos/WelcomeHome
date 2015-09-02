@@ -1,0 +1,26 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/activity_horizontal_margin"
+    tools:context="com.rhpark.welcomehome.fragment.IntroFragment">
+
+    <TextView
+        android:id="@+id/intro_text"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:text="환영합니다!\n\n하단의 버튼을 눌러\n자신이 사는 집의 위치를 지정해주세요."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"/>
+
+    <Button
+        android:layout_below="@id/intro_text"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/btnSelectLocation"
+        android:text="위치 설정하기"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>
