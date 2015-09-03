@@ -1,8 +1,10 @@
 package com.rhpark.welcomehome;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -73,19 +75,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startIntroFragment() {
-        GoogleApiClient googleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .build();
-
-        // It's OK to use blockingConnect() here as we are running in an
-        // IntentService that executes work on a separate (background) thread.
-        ConnectionResult connectionResult = googleApiClient.blockingConnect(
-                Constants.GOOGLE_API_CLIENT_TIMEOUT_S, TimeUnit.SECONDS);
-
-        if (connectionResult.isSuccess() && googleApiClient.isConnected()) {
-            Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-            setIntroFragment(lastLocation);
-        }
+        new AcyncStartIntroFragment(getApplicationContext()).execute();
     }
 
     private void setIntroFragment(Location lastLocation){
@@ -102,5 +92,48 @@ public class MainActivity extends AppCompatActivity {
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .commit();
+    }
+
+    public static Intent getLaunchIntent(Context context){
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        return intent;
+    }
+
+    private class AcyncStartIntroFragment extends AsyncTask<Void, Void, ConnectionResult>{
+
+        private Context context;
+        private GoogleApiClient googleApiClient;
+
+        public AcyncStartIntroFragment(Context context) {
+            super();
+            this.context = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            googleApiClient = new GoogleApiClient.Builder(context)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+
+        @Override
+        protected ConnectionResult doInBackground(Void... params) {
+            // It's OK to use blockingConnect() here as we are running in an
+            // IntentService that executes work on a separate (background) thread.
+            ConnectionResult connectionResult = googleApiClient.blockingConnect(
+                    Constants.GOOGLE_API_CLIENT_TIMEOUT_S, TimeUnit.SECONDS);
+
+            return connectionResult;
+        }
+
+        @Override
+        protected void onPostExecute(ConnectionResult connectionResult) {
+            if (connectionResult.isSuccess() && googleApiClient.isConnected()) {
+                Location lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+                setIntroFragment(lastLocation);
+            }
+        }
     }
 }

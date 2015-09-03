@@ -81,9 +81,6 @@ public class Pref {
         Log.i("test","json : "+json);
 
         if (TextUtils.isEmpty(json) == false) {
-//            User user = new User();
-//            List<UserContent> contents = Arrays.asList(gson.fromJson(json, UserContent[].class));
-//            user.setContent(contents);
             User user = gson.fromJson(json, User.class);
 
             Log.i("test", "get user : " + user.toString());

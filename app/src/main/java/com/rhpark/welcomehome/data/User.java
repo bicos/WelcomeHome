@@ -11,6 +11,8 @@ import java.util.List;
  */
 public class User implements Parcelable {
 
+    private final Object mLock = new Object();
+
     private List<UserContent> contents;
 
     public User() {
@@ -26,16 +28,14 @@ public class User implements Parcelable {
         return contents;
     }
 
-    public void setContent(List<UserContent> contents) {
-        this.contents = contents;
-    }
-
     public UserContent getContent(int position) {
         return contents.size() > position ? contents.get(position) : null;
     }
 
     public void addContent(UserContent contents) {
-        this.contents.add(contents);
+        synchronized (mLock) {
+            this.contents.add(contents);
+        }
     }
 
     protected User(Parcel in) {

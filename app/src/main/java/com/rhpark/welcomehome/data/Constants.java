@@ -25,4 +25,6 @@ public class Constants {
     public static final int TYPE_HOME_MAP = 1;
     public static final String HOME_IMG = "home_img.png";
 
+    public static final int TYPE_VOLUMN = 2;
+
 }

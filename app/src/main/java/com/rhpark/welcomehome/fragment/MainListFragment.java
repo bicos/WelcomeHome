@@ -59,7 +59,6 @@ public class MainListFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-
     }
 
 }

@@ -1,10 +1,12 @@
 package com.rhpark.welcomehome;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +29,7 @@ import com.rhpark.welcomehome.data.Constants;
 import com.rhpark.welcomehome.data.Pref;
 import com.rhpark.welcomehome.data.User;
 import com.rhpark.welcomehome.data.UserHomeMap;
+import com.rhpark.welcomehome.data.UserVolume;
 
 
 public class SelectLocationActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -140,12 +143,8 @@ public class SelectLocationActivity extends AppCompatActivity implements OnMapRe
 
     @Override
     public void onBackPressed() {
-        Toast.makeText(getApplicationContext(),
-                "마지막으로 선택된 위치가 집으로 저장되었습니다.",
-                Toast.LENGTH_SHORT).show();
-
         LatLng lastLatLng = homeMarker.getPosition();
-        Pref.setMyHomeLocation(lastLatLng);
+//        Pref.setMyHomeLocation(lastLatLng);
 
         Geofence geofence = new Geofence.Builder()
                 .setCircularRegion(lastLatLng.latitude, lastLatLng.longitude, Constants.TRIGGER_RADIUS)
@@ -157,36 +156,52 @@ public class SelectLocationActivity extends AppCompatActivity implements OnMapRe
         // 지오펜스 등록
         LocationService.addGeofence(getApplicationContext(), (ParcelableGeofence) geofence);
 
-        // 이미지 캡쳐
-        captureMap();
+        // 유저 정보 생성
+        createUserInfo();
 
         setResult(RESULT_OK);
         finish();
+    }
+
+    private void createUserInfo() {
+        User user = new User();
+        createUserHomeMap(user);
+    }
+
+    private void createUserHomeMap(final User user) {
+        if (map != null) {
+            map.snapshot(new GoogleMap.SnapshotReadyCallback() {
+                @Override
+                public void onSnapshotReady(Bitmap bitmap) {
+                    String path = Utils.saveHomeImg(SelectLocationActivity.this, bitmap);
+                    if (TextUtils.isEmpty(path) == false) {
+                        UserHomeMap homeMap = new UserHomeMap(path, "저의 집입니다.");
+                        user.addContent(homeMap);
+                        createUserVolume(user);
+                    }
+                }
+            });
+        }
+    }
+
+    private void createUserVolume(final User user) {
+        AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        int ringVolume = audio.getStreamVolume(AudioManager.STREAM_RING);
+        int mediaVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+        UserVolume userVolume = new UserVolume(ringVolume, mediaVolume, ringVolume, mediaVolume);
+        user.addContent(userVolume);
+
+        Pref.setUser(user);
+
+        Toast.makeText(getApplicationContext(),
+                "마지막으로 선택된 위치가 집으로 저장되었습니다.",
+                Toast.LENGTH_SHORT).show();
     }
 
     public static void startSelectLocationActivity(Activity activity, Location location, int reqCode) {
         Intent intent = new Intent(activity, SelectLocationActivity.class);
         intent.putExtra(EXTRA_LAST_LOCATION, location);
         activity.startActivityForResult(intent, reqCode);
-    }
-
-    private void captureMap() {
-        if (map != null) {
-            map.snapshot(new GoogleMap.SnapshotReadyCallback() {
-                @Override
-                public void onSnapshotReady(Bitmap bitmap) {
-                    String path = Utils.saveHomeImg(SelectLocationActivity.this, bitmap);
-
-                    if (TextUtils.isEmpty(path) == false) {
-                        User user = new User();
-
-                        UserHomeMap homeMap = new UserHomeMap(path, "저의 집입니다.");
-                        user.addContent(homeMap);
-
-                        Pref.setUser(user);
-                    }
-                }
-            });
-        }
     }
 }

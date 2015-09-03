@@ -10,8 +10,8 @@ import com.google.android.gms.maps.model.LatLng;
  * Created by rhpark on 2015. 9. 2..
  */
 public class UserHomeMap implements UserContent, Parcelable {
-
     private int type = Constants.TYPE_HOME_MAP;
+
     private String homeImgPath;
     private String homeImgDesc;
     private LatLng homeLatLng;

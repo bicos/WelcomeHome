@@ -224,9 +224,9 @@ public class LocationService extends IntentService{
         String msg = DateFormat.getDateTimeInstance().format(new Date());
 
         // The intent to trigger when the notification is tapped
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-//                DetailActivity.getLaunchIntent(this, attraction.name),
-//                PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                MainActivity.getLaunchIntent(this),
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         // The intent to trigger when the notification is dismissed, in this case
         // we want to clear remote notifications as well
@@ -241,7 +241,7 @@ public class LocationService extends IntentService{
                 .setContentTitle(title)
                 .setContentText(msg)
                 .setSmallIcon(R.drawable.cast_ic_notification_on)
-//                .setContentIntent(pendingIntent)
+                .setContentIntent(pendingIntent)
 //                .setDeleteIntent(deletePendingIntent)
                 .setCategory(Notification.CATEGORY_EVENT)
                 .setAutoCancel(true);
