@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.media.AudioManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
@@ -22,6 +23,9 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.internal.ParcelableGeofence;
 import com.google.android.gms.maps.model.LatLng;
 import com.rhpark.welcomehome.data.Constants;
+import com.rhpark.welcomehome.data.Pref;
+import com.rhpark.welcomehome.data.User;
+import com.rhpark.welcomehome.data.UserVolume;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -135,14 +139,47 @@ public class LocationService extends IntentService{
             switch (event.getGeofenceTransition()) {
                 case Geofence.GEOFENCE_TRANSITION_ENTER: // 집에 도착
                     showNotification(event.getGeofenceTransition());
+                    startUserSetting(event.getGeofenceTransition());
                     break;
 
                 case Geofence.GEOFENCE_TRANSITION_EXIT: // 집에서 출발
                     showNotification(event.getGeofenceTransition());
+                    startUserSetting(event.getGeofenceTransition());
                     break;
             }
         }
         GeofenceReceiver.completeWakefulIntent(intent);
+    }
+
+    private void startUserSetting(int geofenceTransition) {
+        User user = Pref.getUser();
+        AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        if (Geofence.GEOFENCE_TRANSITION_ENTER == geofenceTransition) { // 집에 도착
+            UserVolume userVolume = (UserVolume) user.getUserContent(Constants.TYPE_VOLUMN);
+            if (userVolume != null) {
+                int ring = userVolume.getIndoorRingVolume();
+                int media = userVolume.getOutdoorMediaVolume();
+                setUserVolume(audio, ring, media);
+            }
+        } else { // 집에서 출발
+            UserVolume userVolume = (UserVolume) user.getUserContent(Constants.TYPE_VOLUMN);
+            if (userVolume != null) {
+                int ring = userVolume.getOutdoorRingVolume();
+                int media = userVolume.getOutdoorMediaVolume();
+                setUserVolume(audio, ring, media);
+            }
+        }
+    }
+
+    private void setUserVolume(AudioManager audio, int ring, int media) {
+        audio.setStreamVolume(AudioManager.STREAM_RING, ring, 0);
+        audio.setStreamVolume(AudioManager.STREAM_MUSIC, media, 0);
+        if (ring == 0) {
+            audio.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
+        } else {
+            audio.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        }
     }
 
     /**
