@@ -9,16 +9,17 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * Created by rhpark on 2015. 9. 2..
  */
-public class UserHomeMap implements UserContent, Parcelable {
-    private int type = Constants.TYPE_HOME_MAP;
+public class UserHomeMap extends UserContent implements Parcelable {
 
     private String homeImgPath;
     private String homeImgDesc;
     private LatLng homeLatLng;
 
-    public UserHomeMap(String homeImgPath, String homeImgDesc) {
+    public UserHomeMap(String homeImgPath, String homeImgDesc, LatLng homeLatLng) {
+        super(Constants.TYPE_HOME_MAP);
         this.homeImgPath = homeImgPath;
         this.homeImgDesc = homeImgDesc;
+        this.homeLatLng = homeLatLng;
     }
 
     public String getHomeImgPath() {
@@ -41,7 +42,7 @@ public class UserHomeMap implements UserContent, Parcelable {
         return homeLatLng;
     }
 
-    public Location getHomeLocation(){
+    public Location getHomeLocation() {
         if (homeLatLng != null) {
             Location location = new Location("home_location");
             location.setLatitude(homeLatLng.latitude);
@@ -54,16 +55,6 @@ public class UserHomeMap implements UserContent, Parcelable {
 
     public void setHomeLatLng(LatLng homeLatLng) {
         this.homeLatLng = homeLatLng;
-    }
-
-    @Override
-    public int getType() {
-        return type;
-    }
-
-    @Override
-    public Object getContents() {
-        return this;
     }
 
     protected UserHomeMap(Parcel in) {

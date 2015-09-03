@@ -13,33 +13,39 @@ public class User implements Parcelable {
 
     private final Object mLock = new Object();
 
-    private List<UserContent> contents;
+    private List<UserContentImpl> contents;
 
     public User() {
         this.contents = new ArrayList<>();
     }
 
-    public User(List<UserContent> contents) {
+    public User(List<UserContentImpl> contents) {
         this.contents = contents;
     }
 
 
-    public List<UserContent> getContents() {
+    public List<UserContentImpl> getContents() {
         return contents;
     }
 
-    public UserContent getContent(int position) {
+    public UserContentImpl getContent(int position) {
         return contents.size() > position ? contents.get(position) : null;
     }
 
-    public void addContent(UserContent contents) {
+    public void addContent(UserContentImpl contents) {
         synchronized (mLock) {
             this.contents.add(contents);
         }
     }
 
+    public void replaceContent(UserContentImpl content) {
+        synchronized (mLock) {
+            this.contents.set(this.contents.indexOf(content), content);
+        }
+    }
+
     protected User(Parcel in) {
-        this.contents = in.readArrayList(UserContent.class.getClassLoader());
+        this.contents = in.readArrayList(UserContentImpl.class.getClassLoader());
     }
 
     @Override

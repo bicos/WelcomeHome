@@ -6,8 +6,7 @@ import android.os.Parcelable;
 /**
  * Created by rhpark on 2015. 9. 3..
  */
-public class UserVolume implements UserContent, Parcelable{
-    private int type = Constants.TYPE_VOLUMN;
+public class UserVolume extends UserContent implements Parcelable {
 
     private int indoorMediaVolume;
     private int indoorRingVolume;
@@ -15,6 +14,7 @@ public class UserVolume implements UserContent, Parcelable{
     private int outdoorRingVolume;
 
     public UserVolume(int indoorMediaVolumn, int indoorRingVolumn, int outdoorMediaVolumn, int outdoorRingVolumn) {
+        super(Constants.TYPE_VOLUMN);
         this.indoorMediaVolume = indoorMediaVolumn;
         this.indoorRingVolume = indoorRingVolumn;
         this.outdoorMediaVolume = outdoorMediaVolumn;
@@ -51,16 +51,6 @@ public class UserVolume implements UserContent, Parcelable{
 
     public void setOutdoorRingVolume(int outdoorRingVolume) {
         this.outdoorRingVolume = outdoorRingVolume;
-    }
-
-    @Override
-    public int getType() {
-        return type;
-    }
-
-    @Override
-    public Object getContents() {
-        return this;
     }
 
     @Override

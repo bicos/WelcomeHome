@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.rhpark.welcomehome.R;
 import com.rhpark.welcomehome.data.Constants;
 import com.rhpark.welcomehome.data.User;
-import com.rhpark.welcomehome.data.UserContent;
+import com.rhpark.welcomehome.data.UserContentImpl;
 import com.rhpark.welcomehome.holder.HomeMapHolder;
 import com.rhpark.welcomehome.holder.VolumeHolder;
 
@@ -54,7 +54,7 @@ public class MainListAdapter extends RecyclerView.Adapter{
 
     @Override
     public int getItemViewType(int position) {
-        UserContent content = user.getContent(position);
+        UserContentImpl content = user.getContent(position);
         return content.getType();
     }
 
@@ -63,7 +63,7 @@ public class MainListAdapter extends RecyclerView.Adapter{
         return user.getContents().size();
     }
 
-    public interface ViewHolderImpl<T extends UserContent> {
+    public interface ViewHolderImpl<T extends UserContentImpl> {
 
         public void bindView(T userContent);
     }
