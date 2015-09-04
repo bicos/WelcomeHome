@@ -2,7 +2,6 @@ package com.rhpark.welcomehome.data;
 
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -30,14 +29,11 @@ public class Pref {
     }
 
     public static void setUser(User user) {
-        Log.i("test","set user : "+user.toString());
-
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(UserContentImpl.class, new InterfaceAdapter<UserContentImpl>());
         Gson gson = builder.create();
 
         getSharedPreferences().edit()
-//                .putString(PREF_USER_INFO, gson.toJson(user.getContents().toArray()))
                 .putString(PREF_USER_INFO, gson.toJson(user))
                 .apply();
     }
@@ -46,15 +42,9 @@ public class Pref {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(UserContentImpl.class, new InterfaceAdapter<UserContentImpl>());
         Gson gson = builder.create();
-
         String json = getSharedPreferences().getString(PREF_USER_INFO, "");
-
-        Log.i("test","json : "+json);
-
         if (TextUtils.isEmpty(json) == false) {
             User user = gson.fromJson(json, User.class);
-
-            Log.i("test", "get user : " + user.toString());
             return user;
         }
         return null;
