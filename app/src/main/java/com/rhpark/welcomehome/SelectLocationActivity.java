@@ -179,10 +179,10 @@ public class SelectLocationActivity extends AppCompatActivity implements OnMapRe
 
     private void createUserVolume(final User user) {
         AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        int ringVolume = audio.getStreamVolume(AudioManager.STREAM_RING);
         int mediaVolume = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int ringVolume = audio.getStreamVolume(AudioManager.STREAM_RING);
 
-        UserVolume userVolume = new UserVolume(ringVolume, mediaVolume, 0, 0);
+        UserVolume userVolume = new UserVolume(mediaVolume, ringVolume, 0, 0);
         user.addContent(userVolume);
 
         Pref.setUser(user);

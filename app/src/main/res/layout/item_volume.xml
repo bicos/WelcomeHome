@@ -37,6 +37,12 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
                     android:text="설정 저장" />
+
+                <!--<Button-->
+                    <!--android:id="@+id/btn_test_setting"-->
+                    <!--android:text="test"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content" />-->
             </LinearLayout>
 
 

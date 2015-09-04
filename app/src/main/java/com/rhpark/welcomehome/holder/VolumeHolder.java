@@ -29,6 +29,7 @@ public class VolumeHolder
     private SeekBar outdoorMediaVolume;
 
     private Button btnSaveSetting;
+//    private Button btnTestSetting;
 
     public VolumeHolder(View itemView) {
         super(itemView);
@@ -50,6 +51,7 @@ public class VolumeHolder
         outdoorMediaVolume.setMax(maxMediaVolume);
 
         btnSaveSetting = (Button) itemView.findViewById(R.id.btn_save_setting);
+//        btnTestSetting = (Button) itemView.findViewById(R.id.btn_test_setting);
     }
 
 
@@ -145,6 +147,17 @@ public class VolumeHolder
                             .show();
                 }
             });
+//            btnTestSetting.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Context context = v.getContext();
+//                    Intent intent = new Intent(context, LocationService.class);
+//                    intent.setAction(LocationService.ACTION_TEST_VOLUME_MODIFY);
+//                    intent.putExtra("ring", userContent.getIndoorRingVolume());
+//                    intent.putExtra("media", userContent.getIndoorMediaVolume());
+//                    context.startService(intent);
+//                }
+//            });
         }
     }
 }

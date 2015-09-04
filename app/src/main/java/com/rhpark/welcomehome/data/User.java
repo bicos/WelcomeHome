@@ -32,6 +32,15 @@ public class User implements Parcelable {
         return contents.size() > position ? contents.get(position) : null;
     }
 
+    public UserContentImpl getContentFromType(int typeVolumn) {
+        for (UserContentImpl content : contents) {
+            if (content.getType() == typeVolumn) {
+                return content;
+            }
+        }
+        return null;
+    }
+
     public void addContent(UserContentImpl contents) {
         synchronized (mLock) {
             this.contents.add(contents);
@@ -76,4 +85,6 @@ public class User implements Parcelable {
                 "contents=" + contents +
                 '}';
     }
+
+
 }

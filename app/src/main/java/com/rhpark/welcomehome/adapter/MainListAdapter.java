@@ -47,9 +47,7 @@ public class MainListAdapter extends RecyclerView.Adapter{
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        if (viewHolder instanceof ViewHolderImpl) {
-            ((ViewHolderImpl) viewHolder).bindView(user.getContent(position));
-        }
+        ((ViewHolderImpl) viewHolder).bindView(user.getContent(position));
     }
 
     @Override

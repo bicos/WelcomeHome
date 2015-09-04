@@ -46,6 +46,7 @@ public class LocationService extends IntentService{
     private static final String ACTION_ADD_GEOFENCES = "add_geofences";
     private static final String ACTION_LOCATION_UPDATED = "location_updated";
     private static final String ACTION_REQUEST_LOCATION = "request_location";
+    public static final String ACTION_TEST_VOLUME_MODIFY = "test_volume_modify";
 
     public static final String EXTRA_GEOFENCE_DATA = "geofence_data";
 
@@ -69,6 +70,12 @@ public class LocationService extends IntentService{
                     break;
                 case ACTION_LOCATION_UPDATED:
                     locationUpdated(intent);
+                    break;
+                case ACTION_TEST_VOLUME_MODIFY:
+                    Log.i("test", "ACTION_TEST_VOLUME_MODIFY 진입");
+                    int ring = intent.getIntExtra("ring", 0);
+                    int media = intent.getIntExtra("media", 0);
+                    setUserVolume(ring, media);
                     break;
             }
         }
@@ -153,33 +160,33 @@ public class LocationService extends IntentService{
 
     private void startUserSetting(int geofenceTransition) {
         User user = Pref.getUser();
-        AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         if (Geofence.GEOFENCE_TRANSITION_ENTER == geofenceTransition) { // 집에 도착
-            UserVolume userVolume = (UserVolume) user.getUserContent(Constants.TYPE_VOLUMN);
+            UserVolume userVolume = (UserVolume) user.getContentFromType(Constants.TYPE_VOLUMN);
             if (userVolume != null) {
                 int ring = userVolume.getIndoorRingVolume();
                 int media = userVolume.getOutdoorMediaVolume();
-                setUserVolume(audio, ring, media);
+                setUserVolume(ring, media);
             }
         } else { // 집에서 출발
-            UserVolume userVolume = (UserVolume) user.getUserContent(Constants.TYPE_VOLUMN);
+            UserVolume userVolume = (UserVolume) user.getContentFromType(Constants.TYPE_VOLUMN);
             if (userVolume != null) {
                 int ring = userVolume.getOutdoorRingVolume();
                 int media = userVolume.getOutdoorMediaVolume();
-                setUserVolume(audio, ring, media);
+                setUserVolume(ring, media);
             }
         }
     }
 
-    private void setUserVolume(AudioManager audio, int ring, int media) {
-        audio.setStreamVolume(AudioManager.STREAM_RING, ring, 0);
-        audio.setStreamVolume(AudioManager.STREAM_MUSIC, media, 0);
+    private void setUserVolume(int ring, int media) {
+        AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         if (ring == 0) {
             audio.setRingerMode(AudioManager.RINGER_MODE_VIBRATE);
         } else {
             audio.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
         }
+        audio.setStreamVolume(AudioManager.STREAM_RING, ring, 0);
+        audio.setStreamVolume(AudioManager.STREAM_MUSIC, media, 0);
     }
 
     /**
