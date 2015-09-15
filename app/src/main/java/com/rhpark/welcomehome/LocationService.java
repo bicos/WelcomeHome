@@ -165,7 +165,7 @@ public class LocationService extends IntentService{
             UserVolume userVolume = (UserVolume) user.getContentFromType(Constants.TYPE_VOLUMN);
             if (userVolume != null) {
                 int ring = userVolume.getIndoorRingVolume();
-                int media = userVolume.getOutdoorMediaVolume();
+                int media = userVolume.getIndoorMediaVolume();
                 setUserVolume(ring, media);
             }
         } else { // 집에서 출발
