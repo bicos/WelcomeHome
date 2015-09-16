@@ -11,12 +11,13 @@ import com.rhpark.welcomehome.data.Constants;
 import com.rhpark.welcomehome.data.User;
 import com.rhpark.welcomehome.data.UserContentImpl;
 import com.rhpark.welcomehome.holder.HomeMapHolder;
+import com.rhpark.welcomehome.holder.MemoHolder;
 import com.rhpark.welcomehome.holder.VolumeHolder;
 
 /**
  * Created by rhpark on 2015. 9. 2..
  */
-public class MainListAdapter extends RecyclerView.Adapter{
+public class MainListAdapter extends RecyclerView.Adapter {
 
     private static final String TAG = MainListAdapter.class.getSimpleName();
 
@@ -38,9 +39,13 @@ public class MainListAdapter extends RecyclerView.Adapter{
                 view = LayoutInflater.from(viewGroup.getContext())
                         .inflate(R.layout.item_volume, viewGroup, false);
                 return new VolumeHolder(view);
+            case Constants.TYPE_MEMO:
+                view = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.item_memo, viewGroup, false);
+                return new MemoHolder(view);
 
             default:
-                Log.e(TAG, "알 수 없는 뷰 타입입니다. : viewtype("+viewType+")");
+                Log.e(TAG, "알 수 없는 뷰 타입입니다. : viewtype(" + viewType + ")");
                 return null;
         }
     }
@@ -52,8 +57,7 @@ public class MainListAdapter extends RecyclerView.Adapter{
 
     @Override
     public int getItemViewType(int position) {
-        UserContentImpl content = user.getContent(position);
-        return content.getType();
+        return user.getContent(position).getType();
     }
 
     @Override

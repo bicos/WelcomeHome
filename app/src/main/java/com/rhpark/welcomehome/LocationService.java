@@ -10,6 +10,7 @@ import android.media.AudioManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.rhpark.welcomehome.data.Constants;
 import com.rhpark.welcomehome.data.Pref;
 import com.rhpark.welcomehome.data.User;
+import com.rhpark.welcomehome.data.UserMemo;
 import com.rhpark.welcomehome.data.UserVolume;
 
 import java.text.DateFormat;
@@ -38,7 +40,7 @@ import static com.google.android.gms.location.LocationServices.GeofencingApi;
 /**
  * Created by rhpark on 2015. 9. 1..
  */
-public class LocationService extends IntentService{
+public class LocationService extends IntentService {
 
     private static final String TAG = "WH.LocationService";
 
@@ -81,7 +83,7 @@ public class LocationService extends IntentService{
         }
     }
 
-    public static void addGeofence(Context context, ParcelableGeofence geofence){
+    public static void addGeofence(Context context, ParcelableGeofence geofence) {
         Intent intent = new Intent(context, LocationService.class);
         intent.setAction(LocationService.ACTION_ADD_GEOFENCES);
         intent.putExtra(EXTRA_GEOFENCE_DATA, geofence);
@@ -90,6 +92,7 @@ public class LocationService extends IntentService{
 
     /**
      * 5초마다 업데이트
+     *
      * @param context
      */
     public static void requestLocation(Context context) {
@@ -138,6 +141,8 @@ public class LocationService extends IntentService{
     private void geofenceTriggered(Intent intent) {
         Log.v(TAG, ACTION_GEOFENCE_TRIGGERED);
 
+        User user = Pref.getUser();
+
         // Extract the geofences from the intent
         GeofencingEvent event = GeofencingEvent.fromIntent(intent);
         List<Geofence> geofences = event.getTriggeringGeofences();
@@ -145,21 +150,20 @@ public class LocationService extends IntentService{
         if (geofences != null && geofences.size() > 0) {
             switch (event.getGeofenceTransition()) {
                 case Geofence.GEOFENCE_TRANSITION_ENTER: // 집에 도착
-                    showNotification(event.getGeofenceTransition());
-                    startUserSetting(event.getGeofenceTransition());
+                    showNotification(user, event.getGeofenceTransition());
+                    startUserSetting(user, event.getGeofenceTransition());
                     break;
 
                 case Geofence.GEOFENCE_TRANSITION_EXIT: // 집에서 출발
-                    showNotification(event.getGeofenceTransition());
-                    startUserSetting(event.getGeofenceTransition());
+                    showNotification(user, event.getGeofenceTransition());
+                    startUserSetting(user, event.getGeofenceTransition());
                     break;
             }
         }
         GeofenceReceiver.completeWakefulIntent(intent);
     }
 
-    private void startUserSetting(int geofenceTransition) {
-        User user = Pref.getUser();
+    private void startUserSetting(User user, int geofenceTransition) {
 
         if (Geofence.GEOFENCE_TRANSITION_ENTER == geofenceTransition) { // 집에 도착
             UserVolume userVolume = (UserVolume) user.getContentFromType(Constants.TYPE_VOLUMN);
@@ -260,12 +264,24 @@ public class LocationService extends IntentService{
      *
      * @param action Geofence action
      */
-    private void showNotification(int action) {
+    private void showNotification(User user, int action) {
 
         String title = (action == Geofence.GEOFENCE_TRANSITION_ENTER) ?
                 "집에 도착하셨습니다." :
                 "집에서 출발하셨습니다.";
-        String msg = DateFormat.getDateTimeInstance().format(new Date());
+
+        UserMemo memo = (UserMemo) user.getContentFromType(Constants.TYPE_MEMO);
+        String msg;
+        if (TextUtils.isEmpty(memo.getMemo())) {
+            msg = DateFormat.getDateTimeInstance().format(new Date());
+        } else {
+            if (action == Geofence.GEOFENCE_TRANSITION_ENTER) {
+                msg = memo.getMemo() + "\n\n" +
+                        DateFormat.getDateTimeInstance().format(new Date());
+            } else {
+                msg = DateFormat.getDateTimeInstance().format(new Date());
+            }
+        }
 
         // The intent to trigger when the notification is tapped
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,

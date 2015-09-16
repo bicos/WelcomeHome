@@ -29,6 +29,7 @@ import com.rhpark.welcomehome.data.Constants;
 import com.rhpark.welcomehome.data.Pref;
 import com.rhpark.welcomehome.data.User;
 import com.rhpark.welcomehome.data.UserHomeMap;
+import com.rhpark.welcomehome.data.UserMemo;
 import com.rhpark.welcomehome.data.UserVolume;
 
 
@@ -184,6 +185,12 @@ public class SelectLocationActivity extends AppCompatActivity implements OnMapRe
 
         UserVolume userVolume = new UserVolume(mediaVolume, ringVolume, 0, 0);
         user.addContent(userVolume);
+        createMemo(user);
+    }
+
+    private void createMemo(User user) {
+        UserMemo memo = new UserMemo("");
+        user.addContent(memo);
 
         Pref.setUser(user);
 

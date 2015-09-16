@@ -22,9 +22,10 @@ public class Constants {
     public static final long EXPIRATION_DURATION = Geofence.NEVER_EXPIRE;
 
     // user info
-    public static final int TYPE_HOME_MAP = 1;
-    public static final String HOME_IMG = "home_img.png";
+    public static final int TYPE_HOME_MAP   = 1;
+    public static final String HOME_IMG     = "home_img.png";
 
-    public static final int TYPE_VOLUMN = 2;
+    public static final int TYPE_VOLUMN     = 2;
 
+    public static final int TYPE_MEMO       = 3;
 }
